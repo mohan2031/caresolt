@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Care Solt Admin Panel (Demo)</title>
+  <style>
+    body { font-family: sans-serif; background: #f1f5f9; padding: 20px; }
+    h1 { color: #0f172a; margin-bottom: 10px; }
+    .controls { margin-bottom: 20px; padding: 10px; background: #fff; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    input, button { padding: 8px; margin: 4px; border-radius: 6px; border: 1px solid #cbd5e1; }
+    button { background: #2563eb; color: white; cursor: pointer; }
+    button:hover { background: #1d4ed8; }
+    pre { background: #1e293b; color: #f8fafc; padding: 12px; border-radius: 6px; overflow-x: auto; }
+    .section { margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Care Solt Admin Panel (Demo)</h1>
+
+  <div class="controls">
+    <label>Bearer Token:<br>
+      <input id="token" type="text" size="60" placeholder="Paste your token here" />
+    </label>
+    <br>
+    <label>Tenant ID:<br>
+      <input id="tenant" type="text" size="30" value="demo-tenant" />
+    </label>
+  </div>
+
+  <div class="section">
+    <button onclick="callApi('hospitals')">List Hospitals</button>
+    <button onclick="callApi('doctors')">List Doctors</button>
+    <button onclick="callApi('insurance-companies')">List Insurance</button>
+    <button onclick="bookAppointment()">Book Appointment</button>
+  </div>
+
+  <h3>Response:</h3>
+  <pre id="output">Click a button above…</pre>
+
+  <script>
+    const baseUrl = "https://staging.api.caresolt.com/v1";
+
+    async function callApi(path) {
+      const token = document.getElementById('token').value;
+      const tenant = document.getElementById('tenant').value;
+      try {
+        const res = await fetch(`${baseUrl}/${path}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'X-Tenant-ID': tenant,
+            'Content-Type': 'application/json'
+          }
+        });
+        const data = await res.json();
+        document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        document.getElementById('output').textContent = `Error: ${err}`;
+      }
+    }
+
+    async function bookAppointment() {
+      const token = document.getElementById('token').value;
+      const tenant = document.getElementById('tenant').value;
+      const payload = {
+        patientId: "patient-001",
+        doctorId: "doctor-001",
+        hospitalId: "hospital-001",
+        datetime: new Date().toISOString()
+      };
+      try {
+        const res = await fetch(`${baseUrl}/appointments`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'X-Tenant-ID': tenant,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        document.getElementById('output').textContent = `Error: ${err}`;
+      }
+    }
+  </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Care Solt Admin Panel</title>
+  <style>
+    body { margin: 0; font-family: Arial, sans-serif; background: #f1f5f9; display: flex; height: 100vh; }
+    .sidebar { width: 220px; background: #1e293b; color: #f8fafc; padding: 20px; display: flex; flex-direction: column; }
+    .sidebar h2 { margin-top: 0; font-size: 1.2rem; color: #38bdf8; }
+    .sidebar button { background: none; border: none; color: #f8fafc; text-align: left; padding: 10px; border-radius: 6px; cursor: pointer; }
+    .sidebar button:hover { background: #334155; }
+    .content { flex: 1; padding: 20px; overflow-y: auto; }
+    .header { margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+    input { padding: 6px; border-radius: 4px; border: 1px solid #cbd5e1; }
+    .btn { background: #2563eb; color: white; padding: 8px 12px; border: none; border-radius: 6px; cursor: pointer; }
+    .btn:hover { background: #1d4ed8; }
+    pre { background: #1e293b; color: #f8fafc; padding: 12px; border-radius: 6px; overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>Care Solt</h2>
+    <button onclick="setTab('dashboard')">Dashboard</button>
+    <button onclick="setTab('hospitals')">Hospitals</button>
+    <button onclick="setTab('doctors')">Doctors</button>
+    <button onclick="setTab('insurance')">Insurance</button>
+    <button onclick="setTab('appointments')">Appointments</button>
+    <button onclick="setTab('login')">Login</button>
+  </div>
+
+  <div class="content">
+    <div class="header">
+      <div>
+        <label>Tenant ID: <input id="tenant" value="demo-tenant"></label>
+      </div>
+      <div>
+        <label>Bearer Token: <input id="token" size="40" placeholder="Paste or login" /></label>
+      </div>
+    </div>
+
+    <div id="main"></div>
+  </div>
+
+  <script>
+    const baseUrl = "https://staging.api.caresolt.com/v1";
+    let currentTab = 'dashboard';
+
+    function setTab(tab) {
+      currentTab = tab;
+      render();
+    }
+
+    function render() {
+      const main = document.getElementById('main');
+      if (currentTab === 'dashboard') {
+        main.innerHTML = `<h1>Dashboard</h1><p>Welcome to Care Solt Admin Panel.</p>`;
+      }
+      if (currentTab === 'hospitals') {
+        main.innerHTML = `<h1>Hospitals</h1><button class='btn' onclick="callApi('hospitals')">Load Hospitals</button><pre id='output'></pre>`;
+      }
+      if (currentTab === 'doctors') {
+        main.innerHTML = `<h1>Doctors</h1><button class='btn' onclick="callApi('doctors')">Load Doctors</button><pre id='output'></pre>`;
+      }
+      if (currentTab === 'insurance') {
+        main.innerHTML = `<h1>Insurance Companies</h1><button class='btn' onclick="callApi('insurance-companies')">Load Insurance</button><pre id='output'></pre>`;
+      }
+      if (currentTab === 'appointments') {
+        main.innerHTML = `<h1>Appointments</h1><button class='btn' onclick="bookAppointment()">Book Test Appointment</button><pre id='output'></pre>`;
+      }
+      if (currentTab === 'login') {
+        main.innerHTML = `<h1>Login</h1>
+          <label>Username: <input id='username' value='admin'></label><br><br>
+          <label>Password: <input id='password' type='password' value='password'></label><br><br>
+          <button class='btn' onclick='fakeLogin()'>Login</button>
+          <p>(Demo login only – sets a fake token)</p>`;
+      }
+    }
+
+    async function callApi(path) {
+      const token = document.getElementById('token').value;
+      const tenant = document.getElementById('tenant').value;
+      try {
+        const res = await fetch(`${baseUrl}/${path}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'X-Tenant-ID': tenant,
+            'Content-Type': 'application/json'
+          }
+        });
+        const data = await res.json();
+        document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        document.getElementById('output').textContent = `Error: ${err}`;
+      }
+    }
+
+    async function bookAppointment() {
+      const token = document.getElementById('token').value;
+      const tenant = document.getElementById('tenant').value;
+      const payload = {
+        patientId: "patient-001",
+        doctorId: "doctor-001",
+        hospitalId: "hospital-001",
+        datetime: new Date().toISOString()
+      };
+      try {
+        const res = await fetch(`${baseUrl}/appointments`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'X-Tenant-ID': tenant,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        document.getElementById('output').textContent = `Error: ${err}`;
+      }
+    }
+
+    function fakeLogin() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      if (username && password) {
+        document.getElementById('token').value = "FAKE_ADMIN_TOKEN_123";
+        alert("Demo login successful! Fake token applied.");
+        setTab('dashboard');
+      }
+    }
+
+    render();
+  </script>
+</body>
+</html>
