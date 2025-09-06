@@ -20,7 +20,10 @@
 on:
   push:
     branches: [ "main" ]
+  
   workflow_dispatch:
+  release:
+    types: [created]
 
 env:
   AZURE_WEBAPP_NAME: your-app-name    # set this to your application's name
