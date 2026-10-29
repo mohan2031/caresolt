@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "in.caresolt.mobile"
+    namespace = "com.caresolt.mobile"
     compileSdk = 35
 
     defaultConfig {
