@@ -1,4 +1,4 @@
-package `in`.caresolt.mobile
+package com.caresolt.mobile
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
