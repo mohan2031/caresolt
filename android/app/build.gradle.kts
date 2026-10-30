@@ -14,7 +14,9 @@ val localProperties = Properties().apply {
 fun buildConfigString(name: String): String {
     // Local developer configuration takes precedence; CI can supply the same
     // public client values through environment variables.
-    val value = localProperties.getProperty(name) ?: System.getenv(name) ?: if (name == "SUPABASE_URL") "https://omhkmysynqmpapetmapg.supabase.co" else ""
+    val value = localProperties.getProperty(name)?.takeIf { it.isNotBlank() }
+        ?: System.getenv(name)?.takeIf { it.isNotBlank() }
+        ?: if (name == "SUPABASE_URL") "https://omhkmysynqmpapetmapg.supabase.co" else ""
     return "\"" + value.replace("\\", "\\\\").replace("\"", "\\\"") + "\""
 }
 
