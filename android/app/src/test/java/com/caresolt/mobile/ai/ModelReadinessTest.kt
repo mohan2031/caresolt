@@ -19,7 +19,7 @@ class ModelReadinessTest {
 
     @Test
     fun emptyModelFileIsNotReady() {
-        val directory = createTempDir(prefix = "caresolt-ai-test")
+        val directory = createTempDirectory("caresolt-ai-test").toFile()
         val model = File(directory, "model.litertlm")
         try {
             model.createNewFile()
@@ -31,7 +31,7 @@ class ModelReadinessTest {
 
     @Test
     fun nonEmptyModelFileIsReady() {
-        val directory = createTempDir(prefix = "caresolt-ai-test")
+        val directory = createTempDirectory("caresolt-ai-test").toFile()
         val model = File(directory, "model.litertlm")
         try {
             model.writeBytes(byteArrayOf(1, 2, 3))
