@@ -42,25 +42,3 @@ private val S: Map<String, Pair<String, String>> = mapOf(
 )
 
 fun t(key: String, lang: String): String = S[key]?.let { if (lang == "kn") it.second else it.first } ?: key
-
-=== FILE: gradle-snippet.txt ===
-// MERGE, don't duplicate: skip SUPABASE_URL / SUPABASE_PUBLISHABLE_KEY / buildConfig lines if the project already defines them.
-// Required additions: the 4 dependencies + kotlin serialization plugin.
-// plugins { id("org.jetbrains.kotlin.plugin.serialization") version "<your kotlin version>" }
-import java.util.Properties
-val localProps = Properties().apply { rootProject.file("local.properties").takeIf { it.exists() }?.inputStream()?.use { load(it) } }
-
-android {
-  buildFeatures { buildConfig = true; compose = true }
-  defaultConfig {
-    buildConfigField("String", "SUPABASE_URL", "\"https://omhkmysynqmpapetmapg.supabase.co\"")
-    buildConfigField("String", "SUPABASE_PUBLISHABLE_KEY", "\"${localProps.getProperty("SUPABASE_PUBLISHABLE_KEY", "")}\"")
-  }
-}
-dependencies {
-  implementation("com.squareup.okhttp3:okhttp:4.12.0")
-  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
-  implementation("androidx.security:security-crypto:1.1.0-alpha06")
-  implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
-  implementation("androidx.compose.material:material-icons-extended")
-}
