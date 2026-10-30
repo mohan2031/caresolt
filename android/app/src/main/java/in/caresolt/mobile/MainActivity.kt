@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Queue
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.SupportAgent
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -48,6 +49,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.caresolt.mobile.ai.AiAssistantScreen
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
@@ -68,7 +70,8 @@ private enum class AppTab(val label: String, val icon: ImageVector) {
     Home("Home", Icons.Default.HealthAndSafety),
     Appointments("Bookings", Icons.Default.CalendarMonth),
     Queue("Queue", Icons.Default.Queue),
-    Help("Help", Icons.Default.Chat)
+    Help("Help", Icons.Default.Chat),
+    Ai("AI", Icons.Default.AutoAwesome)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -148,6 +151,7 @@ private fun CareSoltApp() {
                     body = if (kannada) "ಆಸ್ಪತ್ರೆಯ ಅನುಮತಿಯೊಂದಿಗೆ ಮಾತ್ರ ನೈಜ ಕ್ಯೂ ಸ್ಥಿತಿಯನ್ನು ಪಡೆಯಲಾಗುತ್ತದೆ." else "Live queue data will come only from the existing authorized backend. Patient and staff permissions remain enforced."
                 )
                 AppTab.Help -> HelpScreen(innerPadding, kannada)
+                AppTab.Ai -> AiAssistantScreen(kannada, Modifier.padding(innerPadding))
             }
         }
     }
