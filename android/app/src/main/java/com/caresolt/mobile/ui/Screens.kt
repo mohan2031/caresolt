@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.caresolt.mobile.data.BOOKING_RPC_VERIFIED
+import com.caresolt.mobile.data.BookingForm
 
 private val Teal = Color(0xFF087F8C)
 private enum class Tab(val key: String) { HOME("home"), BOOKINGS("bookings"), QUEUE("queue"), HELP("help"), AI("ai") }
