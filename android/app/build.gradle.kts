@@ -16,7 +16,11 @@ fun buildConfigString(name: String): String {
     // public client values through environment variables.
     val value = localProperties.getProperty(name)?.takeIf { it.isNotBlank() }
         ?: System.getenv(name)?.takeIf { it.isNotBlank() }
-        ?: if (name == "SUPABASE_URL") "https://omhkmysynqmpapetmapg.supabase.co" else ""
+        ?: when (name) {
+            "SUPABASE_URL" -> "https://omhkmysynqmpapetmapg.supabase.co"
+            "SUPABASE_PUBLISHABLE_KEY" -> "sb_publishable_clRcOQtdh3BEVUlk3pBNkA__AhEHWVY"
+            else -> ""
+        }
     return "\"" + value.replace("\\", "\\\\").replace("\"", "\\\"") + "\""
 }
 
