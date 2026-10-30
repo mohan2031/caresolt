@@ -15,6 +15,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -208,13 +209,24 @@ fun HelpScreen(l: String) {
 
 @Composable
 fun AiScreen(l: String) {
-    val device = "${Build.MANUFACTURER} ${Build.MODEL}"   // real device, not hardcoded
-    Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    val device = "${Build.MANUFACTURER} ${Build.MODEL}"
+    val uriHandler = androidx.compose.ui.platform.LocalUriHandler.current
+    var skipped by remember { mutableStateOf(false) }
+    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(20.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(t("ai_title", l), style = MaterialTheme.typography.headlineMedium)
-        Text(t("ai_body", l)); Text("${t("ai_untested", l)} ($device)")
-        // TODO: Gemma is license-gated — require accepted license + Hugging Face token before any download; benchmark CPU/GPU on-device first.
-        Button({ /* TODO: open model terms URL */ }, Modifier.fillMaxWidth()) { Text(t("ai_terms", l)) }
-        OutlinedButton({ }, Modifier.fillMaxWidth()) { Text(t("ai_skip", l)) }
+        Text(t("ai_body", l))
+        Text("${t("ai_untested", l)} ($device)")
+        if (skipped) {
+            Card(Modifier.fillMaxWidth()) {
+                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(if (l == "kn") "AI ಇನ್ನೂ ಸಕ್ರಿಯವಾಗಿಲ್ಲ" else "AI is not enabled yet", style = MaterialTheme.typography.titleMedium)
+                    Text(if (l == "kn") "ಈ ಆವೃತ್ತಿಯಲ್ಲಿ AI ಮಾದರಿ ಸ್ಥಾಪನೆಯಾಗಿಲ್ಲ. ಸಾಮಾನ್ಯ ಸಹಾಯಕ್ಕಾಗಿ Help ಟ್ಯಾಬ್ ಬಳಸಿ." else "The AI model is not installed in this version. Use the Help tab for basic guidance.")
+                }
+            }
+        } else {
+            Button({ uriHandler.openUri("https://ai.google.dev/gemma/terms") }, Modifier.fillMaxWidth()) { Text(t("ai_terms", l)) }
+            OutlinedButton({ skipped = true }, Modifier.fillMaxWidth()) { Text(t("ai_skip", l)) }
+        }
         Text(t("ai_note", l), style = MaterialTheme.typography.bodySmall)
     }
 }
