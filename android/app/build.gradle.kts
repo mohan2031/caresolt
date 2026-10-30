@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.caresolt.mobile"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "in.caresolt.mobile"
