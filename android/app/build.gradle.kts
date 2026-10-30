@@ -11,8 +11,12 @@ val localProperties = Properties().apply {
     val file = rootProject.file("local.properties")
     if (file.exists()) file.inputStream().use { load(it) }
 }
-fun buildConfigString(name: String): String =
-    "\"" + (localProperties.getProperty(name) ?: "").replace("\\", "\\\\").replace("\"", "\\\"") + "\""
+fun buildConfigString(name: String): String {
+    // Local developer configuration takes precedence; CI can supply the same
+    // public client values through environment variables.
+    val value = localProperties.getProperty(name) ?: System.getenv(name) ?: ""
+    return "\"" + value.replace("\\", "\\\\").replace("\"", "\\\"") + "\""
+}
 
 android {
     namespace = "com.caresolt.mobile"
