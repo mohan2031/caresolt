@@ -1,9 +1,18 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
     id("org.jetbrains.kotlin.plugin.serialization")
 }
+
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) file.inputStream().use { load(it) }
+}
+fun buildConfigString(name: String): String =
+    "\"" + (localProperties.getProperty(name) ?: "").replace("\\", "\\\\").replace("\"", "\\\"") + "\""
 
 android {
     namespace = "com.caresolt.mobile"
@@ -15,9 +24,10 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "0.1.0"
+        buildConfigField("String", "SUPABASE_URL", buildConfigString("SUPABASE_URL"))
+        buildConfigField("String", "SUPABASE_PUBLISHABLE_KEY", buildConfigString("SUPABASE_PUBLISHABLE_KEY"))
     }
 
-    // Keep Java and Kotlin bytecode targets aligned for reproducible Android builds.
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -50,7 +60,6 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
-    // Pinned LiteRT-LM runtime; model weights are downloaded separately at runtime.
     implementation("com.google.ai.edge.litertlm:litertlm-android:0.18.1")
     testImplementation("junit:junit:4.13.2")
     debugImplementation("androidx.compose.ui:ui-tooling")
