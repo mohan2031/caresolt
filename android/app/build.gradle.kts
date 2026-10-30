@@ -46,5 +46,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
     // Pinned LiteRT-LM runtime; model weights are downloaded separately at runtime.
     implementation("com.google.ai.edge.litertlm:litertlm-android:0.18.1")
+    testImplementation("junit:junit:4.13.2")
     debugImplementation("androidx.compose.ui:ui-tooling")
 }
