@@ -2,8 +2,8 @@ package com.caresolt.mobile.data
 
 import com.caresolt.mobile.BuildConfig
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.auth.Auth
 import io.github.jan.supabase.createSupabaseClient
-import io.github.jan.supabase.plugins.Auth
 import io.github.jan.supabase.postgrest.Postgrest
 
 object CareSoltSupabase {
