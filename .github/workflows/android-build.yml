@@ -19,6 +19,11 @@ jobs:
   android:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      # Set these repository Actions Variables to configure downloadable builds.
+      # They are public client configuration only; never put a service-role key here.
+      SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+      SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -38,6 +43,13 @@ jobs:
         run: gradle -p android projects
       - name: Run unit tests
         run: gradle -p android :app:testDebugUnitTest
+      - name: Check Supabase build configuration
+        run: |
+          if [ -n "$SUPABASE_URL" ] && [ -n "$SUPABASE_PUBLISHABLE_KEY" ]; then
+            echo "Supabase client configuration is present."
+          else
+            echo "Supabase client configuration is missing; APK will show setup-required state."
+          fi
       - name: Assemble debug APK
         run: gradle -p android :app:assembleDebug
       - uses: actions/upload-artifact@v4
