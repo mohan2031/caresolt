@@ -6,7 +6,7 @@ on:
       - "android/**"
       - ".github/workflows/android-build.yml"
   push:
-    branches: ["feat/care-solt-android-mvp"]
+    branches: ["feat/care-solt-android-mvp", "feat/android-supabase-auth-bookings"]
     paths:
       - "android/**"
       - ".github/workflows/android-build.yml"
