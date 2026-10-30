@@ -10,24 +10,26 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
+import java.io.File
 
 private const val GEMMA_MODEL_PAGE = "https://huggingface.co/litert-community/Gemma3-1B-IT"
 
-/**
- * Optional on-device assistant setup.
- *
- * This screen only links to the model's access/licence page. It does not download
- * model weights or start inference. Normal Care Solt screens remain independent.
- */
 @Composable
 fun AiAssistantScreen(
     kannada: Boolean,
     modifier: Modifier = Modifier
 ) {
     val uriHandler = LocalUriHandler.current
+    val context = LocalContext.current
+    val modelFile = remember(context) {
+        File(context.filesDir, "models/gemma3-1b-it-int4.litertlm")
+    }
+    val modelFilePresent = remember(modelFile) { ModelReadiness.isReady(modelFile) }
 
     Column(
         modifier = modifier.fillMaxSize().padding(24.dp),
@@ -61,16 +63,27 @@ fun AiAssistantScreen(
             Text(if (kannada) "ಮಾದರಿ ನಿಯಮಗಳನ್ನು ಪರಿಶೀಲಿಸಿ" else "Review model terms")
         }
         OutlinedButton(
-            onClick = { /* Deliberately leave AI disabled; all other tabs remain available. */ },
+            onClick = { /* Keep AI disabled when skipped. */ },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(if (kannada) "ಈಗ ಬೇಡ — AI ಬಿಟ್ಟುಬಿಡಿ" else "Skip for now")
         }
         Text(
-            text = if (kannada) {
-                "ಈ ಹಂತದಲ್ಲಿ ಯಾವುದೇ ಮಾದರಿ ಡೌನ್‌ಲೋಡ್ ಆಗುವುದಿಲ್ಲ. ರೋಗಿಯ ಮಾಹಿತಿ AI ಗೆ ಕಳುಹಿಸುವುದಿಲ್ಲ. AI ಇಲ್ಲದಿದ್ದರೂ Care Solt ನ ಇತರ ಸೇವೆಗಳು ಲಭ್ಯ."
+            text = if (modelFilePresent) {
+                if (kannada) "ಮಾದರಿ ಫೈಲ್ ಕಂಡುಬಂದಿದೆ. ಅದರ ಸಮಗ್ರತೆ ಮತ್ತು ಸಾಧನ ಹೊಂದಾಣಿಕೆ ಪರಿಶೀಲನೆಯ ನಂತರ ಮಾತ್ರ AI ಲೋಡ್ ಮಾಡಲಾಗುತ್ತದೆ."
+                else "A non-empty model file was found. AI remains disabled until its integrity and device compatibility are verified."
             } else {
-                "No model is downloaded at this stage. Patient information is never sent to the AI. The rest of Care Solt remains available if you skip AI."
+                if (kannada) "ಮಾದರಿ ಇನ್ನೂ ಇನ್‌ಸ್ಟಾಲ್ ಆಗಿಲ್ಲ. ಈಗ ಯಾವುದೇ ಡೌನ್‌ಲೋಡ್ ನಡೆಯುವುದಿಲ್ಲ."
+                else "Model is not installed yet. No download is started at this stage."
+            },
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.secondary
+        )
+        Text(
+            text = if (kannada) {
+                "ರೋಗಿಯ ಮಾಹಿತಿ AI ಗೆ ಕಳುಹಿಸುವುದಿಲ್ಲ. AI ಬಿಟ್ಟರೂ Care Solt ನ ಇತರ ಸೇವೆಗಳು ಲಭ್ಯ."
+            } else {
+                "Patient information is never sent to the AI. The rest of Care Solt remains available if you skip AI."
             },
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.secondary
